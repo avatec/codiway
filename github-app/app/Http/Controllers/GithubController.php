@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GithubStoreRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Github;
@@ -10,9 +11,14 @@ use App\Models\User;
 
 class GithubController extends Controller
 {
-    public function index(): View
+    public function index(Request $request)
     {
         $items = Github::all();
+
+        if ($request->is('api/*')) {
+            return response()->json(['data' => $items], 200);
+        }
+
         return view('github.index', ['list' => $items]);
     }
 

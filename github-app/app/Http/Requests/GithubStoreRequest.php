@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Rules\GithubRepoUrl;
 
 class GithubStoreRequest extends FormRequest
 {
@@ -25,7 +25,7 @@ class GithubStoreRequest extends FormRequest
     {
         return [
             'name' => ['string' , 'max:255' , 'required'],
-            'url' => ['url' , 'required']
+            'url' => ['string' , 'required', new GithubRepoUrl]
         ];
     }
 }
