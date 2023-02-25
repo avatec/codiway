@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GithubStoreRequest;
-// use Illuminate\Contracts\View\View;
-// use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Github;
-// use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Redirect;
-
+use App\Models\User;
 
 class GithubController extends Controller
 {
@@ -45,6 +41,6 @@ class GithubController extends Controller
     {
         $github = Github::findOrFail($id);
         $github->delete();
-        return redirect()->route('github')->with('status', 'Github repository removed successfully');
+        return redirect()->route('github');
     }
 }

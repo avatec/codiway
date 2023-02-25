@@ -1,0 +1,12 @@
+
+   PASS  Tests\Unit\GithubControllerTest
+  ✓ index                                                                0.32s  
+  ✓ add                                                                  0.04s  
+  ✓ show                                                                 0.04s  
+  ✓ store creates new github                                             0.04s  
+  ✓ store updates existing github                                        0.03s  
+  ✓ remove                                                               0.04s  
+
+  Tests:    6 passed (20 assertions)
+  Duration: 0.61s
+
