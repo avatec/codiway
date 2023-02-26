@@ -14,7 +14,7 @@ class GithubClientHelper
         $this->cache = $cache;
     }
 
-    private function getGithubStats( string $url )
+    public function getStats( string $url )
     {
         $path = parse_url($url, PHP_URL_PATH);
         $parts = explode('/', trim($path, '/'));
@@ -28,7 +28,7 @@ class GithubClientHelper
         // Albo na sztywno ;-)
         $cacheTime = 60 * 60; // na godzinę (limity githuba)
 
-        $cachedResult = $this->cache->get($cacheKey);
+        $cachedResult = $this->cache::get($cacheKey);
         if ($cachedResult) {
             return $cachedResult;
         }
@@ -75,7 +75,7 @@ class GithubClientHelper
 
         $result = response()->json( $data );
 
-        $this->cache->put($cacheKey, $result, $cacheTime);
+        $this->cache::put($cacheKey, $result, $cacheTime);
         return $result;
     }
 }

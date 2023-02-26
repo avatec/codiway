@@ -15,6 +15,11 @@ class GithubApiController extends Controller
 {
     private GithubClientHelper $GithubClient;
 
+    public function __construct( GithubClientHelper $GithubClient )
+    {
+        $this->GithubClient = $GithubClient;
+    }
+
     /**
      * @lrd:start
      * Returns github repositories list
@@ -33,7 +38,7 @@ class GithubApiController extends Controller
 
         foreach( $data as $index=>$value ) {
             try {
-                $data[$index]['stats'] = $this->GithubClient->getGithubStats( $value['url']);
+                $data[$index]['stats'] = $this->GithubClient->getStats( $value['url'] );
             } catch (\Exception $e) {
                 $data[$index]['stats'] = null;
             }
