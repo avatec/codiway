@@ -51,32 +51,34 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof NotFoundHttpException) {
-            return response()->json([
-                'error' => [
-                    'message' => 'Invalid API endpoint',
-                    'code' => Response::HTTP_NOT_FOUND,
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        }
+        if ($request->is('api/*')) {
+            if ($exception instanceof NotFoundHttpException) {
+                return response()->json([
+                    'error' => [
+                        'message' => 'Invalid API endpoint',
+                        'code' => Response::HTTP_NOT_FOUND,
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            }
 
-        if ($exception instanceof \Illuminate\Validation\ValidationException) {
-            return response()->json([
-                'error' => [
-                    'message' => 'Validation error',
-                    'code' => Response::HTTP_BAD_REQUEST,
-                    'errors' => $exception->validator->errors()->toArray()
-                ],
-            ], Response::HTTP_BAD_REQUEST);
-        }
+            if ($exception instanceof \Illuminate\Validation\ValidationException) {
+                return response()->json([
+                    'error' => [
+                        'message' => 'Validation error',
+                        'code' => Response::HTTP_BAD_REQUEST,
+                        'errors' => $exception->validator->errors()->toArray()
+                    ],
+                ], Response::HTTP_BAD_REQUEST);
+            }
 
-        if ($exception instanceof \Exception) {
-            return response()->json([
-                'error' => [
-                    'message' => $exception->getMessage(),
-                    'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                ],
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            if ($exception instanceof \Exception) {
+                return response()->json([
+                    'error' => [
+                        'message' => $exception->getMessage(),
+                        'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ],
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
 
         return parent::render($request, $exception);
