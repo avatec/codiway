@@ -32,12 +32,69 @@ class GithubApiController extends Controller
 
         $releases = $this->client->api('repo')->releases()->all($owner, $repo);
         $numReleases = count($releases);
+        $lastReleaseDate = isset($releases[0]['published_at']) ? $releases[0]['published_at'] : null;
+
+        $forks = $this->client->api('repo')->forks()->all($owner, $repo);
+        $numForks = count($forks);
+
+        $pullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:open');
+        $numOpenPullRequests = $pullRequests['total_count'];
+        $latestPullRequest = isset( $pullRequests['items'][0]['created_at'] ) ? $pullRequests['items'][0]['created_at'] : null;
 
         return response()->json([
             'stars' => $stars,
             'followers' => $followers,
-            'releases' => $numReleases
+            'releases' => $numReleases,
+            'last_release_date' => date('Y-m-d H:i:s' , strtotime($lastReleaseDate)),
+            'forks' => $numForks,
+            'open_pull_requests' => $numOpenPullRequests,
+            'latest_pull_request' => $latestPullRequest
         ]);
+
+        // $path = parse_url($url, PHP_URL_PATH);
+        // $parts = explode('/', trim($path, '/'));
+
+        // $owner = $parts[0];
+        // $repo = $parts[1];
+
+        // $repository = $this->client->api('repo')->show($owner, $repo);
+        // $stars = $repository['stargazers_count'];
+        // $followers = $repository['subscribers_count'];
+
+        // $releases = $this->client->api('repo')->releases()->all($owner, $repo);
+        // $numReleases = count($releases);
+        // $lastReleaseDate = isset($releases[0]['published_at']) ? $releases[0]['published_at'] : null;
+
+        // $pullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:open');
+        // $numOpenPullRequests = $pullRequests['total_count'];
+        // $latestPullRequest = $pullRequests['items'][0]['created_at'];
+
+        // $closedPullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:closed');
+        // $numClosedPullRequests = $closedPullRequests['total_count'];
+        // $latestMergedPullRequest = null;
+
+        // foreach ($closedPullRequests['items'] as $pullRequest) {
+        //     if ($pullRequest['merged_at'] !== null) {
+        //         $latestMergedPullRequest = $pullRequest['merged_at'];
+        //         break;
+        //     }
+        // }
+
+
+
+
+
+        // return response()->json([
+        //     'stars' => $stars,
+        //     'followers' => $followers,
+        //     'releases' => $numReleases,
+        //     'last_release_date' => $lastReleaseDate,
+        //     'open_pull_requests' => $numOpenPullRequests,
+        //     'last_pull_request_date' => $latestPullRequest,
+        //     'closed_pull_requests' => $numClosedPullRequests,
+        //     'last_merged_pull_request_date' => $latestMergedPullRequest,
+        //     'forks' => $numForks,
+        // ]);
     }
 
     /**
