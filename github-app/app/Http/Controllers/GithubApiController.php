@@ -44,9 +44,9 @@ class GithubApiController extends Controller
         return response()->json([
             'stars' => $stars,
             'followers' => $followers,
+            'forks' => $numForks,
             'releases' => $numReleases,
             'last_release_date' => date('Y-m-d H:i:s' , strtotime($lastReleaseDate)),
-            'forks' => $numForks,
             'open_pull_requests' => $numOpenPullRequests,
             'latest_pull_request' => $latestPullRequest
         ]);

@@ -9,19 +9,18 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
-                    {{-- @include('profile.partials.update-profile-information-form') --}}
                     @if (empty($list))
-                    <p>Nie utworzono jeszcze wpisów. Kliknij <a class="text-blue underline" href="/github/add">tutaj, aby utworzyć pierwszy</a></p>
+                    <p>{{ __('Nie utworzono jeszcze wpisów.') }}<a class="text-blue underline" href="/github/add">{{ __(Dodaj pierwszy wpis) }}</a></p>
                     @else
-                        <p>Kliknij <a class="text-blue underline" href="/github/add">tutaj, aby utworzyć kolejny wpis</a></p>
+                        <p><a class="text-blue underline" href="/github/add">{{ __(Dodaj kolejny wpis) }}</a></p>
                         <br/>
                         <table class="border-collapse table-auto w-full text-sm" style="width:100% !important;">
                             <thead>
                                 <tr>
-                                    <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">ID</th>
-                                    <th width="200" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-left">Name</th>
-                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-left">Url</th>
-                                    <th width="150" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-right">Operacje</th>
+                                    <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('ID') }}</th>
+                                    <th width="200" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-left">{{ __('Name') }}</th>
+                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-left">{{ __('Url') }}</th>
+                                    <th width="150" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-right">{{ __('Operacje') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-slate-100">
@@ -38,7 +37,7 @@
                                         <form action="{{ route('github.remove', ['id' => $item->id]) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-red">Delete</button>
+                                            <button type="submit" class="btn btn-red">{{ __('Delete') }}</button>
                                         </form>
 
                                     </td>
