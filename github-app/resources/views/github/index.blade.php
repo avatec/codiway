@@ -10,9 +10,17 @@
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @if (empty($list))
-                    <p>{{ __('github.no_entries_created') }}<a class="text-blue underline" href="/github/add">{{ __('github.add_new_repository') }}</a></p>
+                    <p>
+                        {{ __('github.no_entries_created') }}
+                        @if ($records < 5)
+                        <a class="text-blue underline" href="/github/add">{{ __('github.add_new_repository') }}</a></p>
+                        @endif
                     @else
-                        <p><a class="text-blue underline" href="/github/add">{{ __('github.add_new_repository') }}</a></p>
+                        <p>
+                            @if ($records < 5)
+                            <a class="text-blue underline" href="/github/add">{{ __('github.add_new_repository') }}</a></p>
+                            @endif
+                        </p>
                         <br/>
                         <table class="border-collapse table-auto w-full text-sm" style="width:100% !important;">
                             <thead>

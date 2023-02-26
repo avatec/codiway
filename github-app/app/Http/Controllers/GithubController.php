@@ -19,7 +19,10 @@ class GithubController extends Controller
             return response()->json(['data' => $items], 200);
         }
 
-        return view('github.index', ['list' => $items]);
+        return view('github.index', [
+            'list' => $items,
+            'records' => Github::count()
+        ]);
     }
 
     public function add(): View

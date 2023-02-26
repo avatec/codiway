@@ -26,30 +26,64 @@ class GithubApiController extends Controller
         $owner = $parts[0];
         $repo = $parts[1];
 
-        $repository = $this->client->api('repo')->show($owner, $repo);
-        $stars = $repository['stargazers_count'];
-        $followers = $repository['subscribers_count'];
+        $cacheKey = 'github_stats_' . $owner . '_' . $repo;
+        // W tym miejsu można dodać czas cache do konfiguracji
+        // $cacheTime = config('cache.github_stats_cache_time');
+        // Albo na sztywno ;-)
+        $cacheTime = 60 * 60; // na godzinę (limity githuba)
 
-        $releases = $this->client->api('repo')->releases()->all($owner, $repo);
-        $numReleases = count($releases);
-        $lastReleaseDate = isset($releases[0]['published_at']) ? $releases[0]['published_at'] : null;
+        $cachedResult = Cache::get($cacheKey);
+        if ($cachedResult) {
+            return $cachedResult;
+        }
 
-        $forks = $this->client->api('repo')->forks()->all($owner, $repo);
-        $numForks = count($forks);
+        $data = [];
 
-        $pullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:open');
-        $numOpenPullRequests = $pullRequests['total_count'];
-        $latestPullRequest = isset( $pullRequests['items'][0]['created_at'] ) ? $pullRequests['items'][0]['created_at'] : null;
+        try {
+            $repository = $this->client->api('repo')->show($owner, $repo);
+            $stars = $repository['stargazers_count'];
+            $followers = $repository['subscribers_count'];
 
-        return response()->json([
-            'stars' => $stars,
-            'followers' => $followers,
-            'forks' => $numForks,
-            'releases' => $numReleases,
-            'last_release_date' => date('Y-m-d H:i:s' , strtotime($lastReleaseDate)),
-            'open_pull_requests' => $numOpenPullRequests,
-            'latest_pull_request' => $latestPullRequest
-        ]);
+            $releases = $this->client->api('repo')->releases()->all($owner, $repo);
+            $numReleases = count($releases);
+            $lastReleaseDate = isset($releases[0]['published_at']) ? $releases[0]['published_at'] : null;
+
+            $forks = $this->client->api('repo')->forks()->all($owner, $repo);
+            $numForks = count($forks);
+
+            $pullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:open');
+            $numOpenPullRequests = $pullRequests['total_count'];
+
+            $closedPullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:closed');
+            $numClosedPullRequests = $closedPullRequests['total_count'];
+
+            $mergedPullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:merged');
+            $latestMergedPullRequest = isset($mergedPullRequests['items'][0]['merged_at']) ? $mergedPullRequests['items'][0]['merged_at'] : null;
+
+            $latestPullRequest = isset( $pullRequests['items'][0]['created_at'] ) ? $pullRequests['items'][0]['created_at'] : null;
+
+            $data = [
+                'stars' => $stars,
+                'followers' => $followers,
+                'forks' => $numForks,
+                'releases' => $numReleases,
+                'last_release_date' => date('Y-m-d H:i:s' , strtotime($lastReleaseDate)),
+                'open_pull_requests' => $numOpenPullRequests,
+                'closed_pull_requests' => $numClosedPullRequests,
+                'latest_pull_request' => $latestPullRequest,
+                'latest_merge_pull_request' => $latestMergedPullRequest
+            ];
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error getting GitHub stats. Please try again later.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+        $result = response()->json( $data);
+
+        Cache::put($cacheKey, $result, $cacheTime);
+        return $result;
     }
 
     /**
