@@ -37,6 +37,9 @@ class GithubController extends Controller
     public function store(GithubStoreRequest $request, $id = null)
     {
         $data = $request->validated();
+        if (Github::count() >= 5) {
+            return redirect()->route('github')->withErrors(['message' => 'Cannot create more than 5 records.']);
+        }
         $github = Github::updateOrCreate(['id' => $id], $data);
 
         $status = $id ? 'github-updated' : 'github-created';

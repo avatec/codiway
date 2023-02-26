@@ -50,51 +50,6 @@ class GithubApiController extends Controller
             'open_pull_requests' => $numOpenPullRequests,
             'latest_pull_request' => $latestPullRequest
         ]);
-
-        // $path = parse_url($url, PHP_URL_PATH);
-        // $parts = explode('/', trim($path, '/'));
-
-        // $owner = $parts[0];
-        // $repo = $parts[1];
-
-        // $repository = $this->client->api('repo')->show($owner, $repo);
-        // $stars = $repository['stargazers_count'];
-        // $followers = $repository['subscribers_count'];
-
-        // $releases = $this->client->api('repo')->releases()->all($owner, $repo);
-        // $numReleases = count($releases);
-        // $lastReleaseDate = isset($releases[0]['published_at']) ? $releases[0]['published_at'] : null;
-
-        // $pullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:open');
-        // $numOpenPullRequests = $pullRequests['total_count'];
-        // $latestPullRequest = $pullRequests['items'][0]['created_at'];
-
-        // $closedPullRequests = $this->client->api('search')->issues('type:pr repo:' . $owner . '/' . $repo . ' is:pr is:closed');
-        // $numClosedPullRequests = $closedPullRequests['total_count'];
-        // $latestMergedPullRequest = null;
-
-        // foreach ($closedPullRequests['items'] as $pullRequest) {
-        //     if ($pullRequest['merged_at'] !== null) {
-        //         $latestMergedPullRequest = $pullRequest['merged_at'];
-        //         break;
-        //     }
-        // }
-
-
-
-
-
-        // return response()->json([
-        //     'stars' => $stars,
-        //     'followers' => $followers,
-        //     'releases' => $numReleases,
-        //     'last_release_date' => $lastReleaseDate,
-        //     'open_pull_requests' => $numOpenPullRequests,
-        //     'last_pull_request_date' => $latestPullRequest,
-        //     'closed_pull_requests' => $numClosedPullRequests,
-        //     'last_merged_pull_request_date' => $latestMergedPullRequest,
-        //     'forks' => $numForks,
-        // ]);
     }
 
     /**
@@ -131,6 +86,10 @@ class GithubApiController extends Controller
         $data = $request->validated();
         if( empty( $data )){
             throw new NotFoundException("Data not found");
+        }
+
+        if (Github::count() >= 5) {
+            throw new NotFoundException("Cannot create more than 5 records.");
         }
 
         $github = Github::updateOrCreate(['id' => $id], $data);
