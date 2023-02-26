@@ -1,182 +1,29 @@
 
-   PASS  Tests\Unit\ExampleTest
-  ✓ that true is true                                                    0.01s  
-
-   PASS  Tests\Feature\Auth\AuthenticationTest
-  ✓ login screen can be rendered                                         0.53s  
-  ✓ users can authenticate using the login screen                        0.15s  
-  ✓ users can not authenticate with invalid password                     0.23s  
-
-   PASS  Tests\Feature\Auth\EmailVerificationTest
-  ✓ email verification screen can be rendered                            0.03s  
-  ✓ email can be verified                                                0.03s  
-  ✓ email is not verified with invalid hash                              0.04s  
-
-   PASS  Tests\Feature\Auth\PasswordConfirmationTest
-  ✓ confirm password screen can be rendered                              0.03s  
-  ✓ password can be confirmed                                            0.08s  
-  ✓ password is not confirmed with invalid password                      0.23s  
-
-   PASS  Tests\Feature\Auth\PasswordResetTest
-  ✓ reset password link screen can be rendered                           0.05s  
-  ✓ reset password link can be requested                                 0.05s  
-  ✓ reset password screen can be rendered                                0.04s  
-  ✓ password can be reset with valid token                               0.04s  
-
-   PASS  Tests\Feature\Auth\PasswordUpdateTest
-  ✓ password can be updated                                              0.09s  
-  ✓ correct password must be provided to update password                 0.09s  
-
-   PASS  Tests\Feature\Auth\RegistrationTest
-  ✓ registration screen can be rendered                                  0.04s  
-  ✓ new users can register                                               0.03s  
-
-   PASS  Tests\Feature\ExampleTest
-  ✓ the application returns a successful response                        0.02s  
-
    FAIL  Tests\Unit\Http\Controllers\GithubApiControllerTest
-  ⨯ index returns correct response structure                             0.03s  
-  ⨯ store with valid data creates new record                             0.03s  
-  ⨯ store with existing id updates existing record                       0.02s  
-  ⨯ store with no data throws exception                                  0.03s  
-  ⨯ store with more than 5 records throws exception                      0.03s  
-  ⨯ remove with existing id deletes record                               0.02s  
-  ⨯ remove with non existing id throws exception                         0.02s  
-
-   FAIL  Tests\Unit\GithubControllerTest
-  ✓ index                                                                0.04s  
-  ✓ add                                                                  0.04s  
-  ✓ show                                                                 0.04s  
-  ⨯ store creates new github                                             0.03s  
-  ⨯ store updates existing github                                        0.03s  
-  ✓ remove                                                               0.04s  
-
-   PASS  Tests\Feature\ProfileTest
-  ✓ profile page is displayed                                            0.05s  
-  ✓ profile information can be updated                                   0.03s  
-  ✓ email verification status is unchanged when the email address is un… 0.02s  
-  ✓ user can delete their account                                        0.08s  
-  ✓ correct password must be provided to delete account                  0.08s  
+  ⨯ index returns correct response structure                             0.77s  
+  ✓ store with valid data creates new record                             0.05s  
+  ✓ store with existing id updates existing record                       0.03s  
+  ✓ store with no data throws exception                                  0.02s  
+  ✓ store with more than 5 records throws exception                      0.03s  
+  ✓ remove with existing id deletes record                               0.03s  
+  ✓ remove with non existing id throws exception                         0.02s  
 
   ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiCont…  RouteNotFoundException   
-  Route [github.index] not defined.
+   FAILED  Tests\Unit\Http\Controllers\GithubApiControllerTest > index retur…   
+  Failed asserting that an array has the key 'original'.
 
-  at vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php:467
-    463▕         if (! is_null($route = $this->routes->getByName($name))) {
-    464▕             return $this->toRoute($route, $parameters, $absolute);
-    465▕         }
-    466▕ 
-  ➜ 467▕         throw new RouteNotFoundException("Route [{$name}] not defined.");
-    468▕     }
-    469▕ 
-    470▕     /**
-    471▕      * Get the URL for a given route instance.
-
-      [2m+2 vendor frames [22m
-  3   tests/Feature/GithubApiControllerTest.php:21
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiControllerTest > store with…    
-  Expected response status code [201] but received 302.
-Failed asserting that 201 is identical to 302.
-
-  at tests/Feature/GithubApiControllerTest.php:57
-     53▕             'name' => 'Test Repository',
-     54▕             'url' => 'https://github.com/test/repository',
-     55▕         ]);
-     56▕ 
-  ➜  57▕         $response->assertStatus(JsonResponse::HTTP_CREATED)
-     58▕                  ->assertJson([
-     59▕                      'success' => true,
-     60▕                      'id' => 1,
-     61▕                  ]);
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiControllerTest > store with…    
-  Failed asserting that table [githubs] matches expected entries count of 0. Entries found: 1.
-.
-
-  at tests/Feature/GithubApiControllerTest.php:68
-     64▕     }
-     65▕ 
-     66▕     public function test_store_with_existing_id_updates_existing_record()
-     67▕     {
-  ➜  68▕         $this->assertDatabaseCount('githubs', 0);
-     69▕ 
-     70▕         $github = Github::factory()->create([
-     71▕             'name' => 'Test Repository',
-     72▕             'url' => 'https://github.com/test/repository',
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiContro…  AssertionFailedError   
-  Failed asserting that exception with message "Data not found" is thrown
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiContro…  AssertionFailedError   
-  Failed asserting that exception with message "Cannot create more than 5 records." is thrown
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiControllerTest > remove with…   
-  Failed asserting that table [githubs] matches expected entries count of 1. Entries found: 7.
-.
-
-  at tests/Feature/GithubApiControllerTest.php:113
-    109▕     public function test_remove_with_existing_id_deletes_record()
-    110▕     {
-    111▕         $github = Github::factory()->create();
-    112▕ 
-  ➜ 113▕         $this->assertDatabaseCount('githubs', 1);
-    114▕ 
-    115▕         $response = $this->deleteJson(route('github.remove', $github->id));
-    116▕ 
-    117▕         $response->assertStatus(JsonResponse::HTTP_OK)
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\Http\Controllers\GithubApiContro…  AssertionFailedError   
-  Failed asserting that exception with message "Record not found" is thrown
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\GithubControllerTest > store creates new github           
-  Failed asserting that false is true.
-
-The following errors occurred during the last request:
-
-The url must be a valid Github repository URL.
-
-  at tests/Feature/GithubControllerTest.php:63
-     59▕ 
-     60▕         $githubData = Github::factory()->make()->toArray();
-     61▕         $response = $this->post(route('github.store'), $githubData);
-     62▕ 
-  ➜  63▕         $this->assertTrue(session()->has('status'));
-     64▕         $this->assertEquals('github-created', session('status'));
-     65▕         $response->assertRedirect(route('github'));
-     66▕ 
-     67▕         $this->assertDatabaseHas('githubs', $githubData);
-
-  1   tests/Feature/GithubControllerTest.php:63
-
-  ────────────────────────────────────────────────────────────────────────────  
-   FAILED  Tests\Unit\GithubControllerTest > store updates existing github      
-  Failed asserting that null matches expected 'github-updated'.
-
-The following errors occurred during the last request:
-
-Cannot create more than 5 records.
-
-  at tests/Feature/GithubControllerTest.php:79
-     75▕ 
-     76▕         $response = $this->actingAs($user)->patch(route('github.store', ['id' => $github->id]), $newData);
-     77▕ 
-     78▕         $response->assertRedirect(route('github'));
-  ➜  79▕         $response->assertSessionHas('status', 'github-updated');
-     80▕ 
-     81▕         $this->assertDatabaseHas('githubs', $newData);
-     82▕         $this->assertDatabaseMissing('githubs', $github->toArray());
-     83▕     }
+  at tests/Feature/GithubApiControllerTest.php:30
+     26▕         $response = $this->getJson(route('api.github.index'));
+     27▕ 
+     28▕         // Assert
+     29▕         $response->assertStatus(JsonResponse::HTTP_OK)
+  ➜  30▕             ->assertJsonStructure([
+     31▕                 'data' => [
+     32▕                     '*' => [
+     33▕                         'id',
+     34▕                         'name',
 
 
-  Tests:    9 failed, 28 passed (84 assertions)
-  Duration: 2.58s
+  Tests:    1 failed, 6 passed (25 assertions)
+  Duration: 1.06s
 

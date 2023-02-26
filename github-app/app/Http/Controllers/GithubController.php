@@ -15,10 +15,6 @@ class GithubController extends Controller
     {
         $items = Github::all();
 
-        if ($request->is('api/*')) {
-            return response()->json(['data' => $items], 200);
-        }
-
         return view('github.index', [
             'list' => $items,
             'records' => Github::count()

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Github;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Cache;
@@ -61,26 +61,23 @@ class GithubApiController extends Controller
             $latestMergedPullRequest = isset($mergedPullRequests['items'][0]['merged_at']) ? $mergedPullRequests['items'][0]['merged_at'] : null;
 
             $latestPullRequest = isset( $pullRequests['items'][0]['created_at'] ) ? $pullRequests['items'][0]['created_at'] : null;
-
-            $data = [
-                'stars' => $stars,
-                'followers' => $followers,
-                'forks' => $numForks,
-                'releases' => $numReleases,
-                'last_release_date' => date('Y-m-d H:i:s' , strtotime($lastReleaseDate)),
-                'open_pull_requests' => $numOpenPullRequests,
-                'closed_pull_requests' => $numClosedPullRequests,
-                'latest_pull_request' => $latestPullRequest,
-                'latest_merge_pull_request' => $latestMergedPullRequest
-            ];
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error getting GitHub stats. Please try again later.',
-                'error' => $e->getMessage()
-            ], 500);
+            throw new \Exception('Error getting GitHub stats. Please try again later.');
         }
 
-        $result = response()->json( $data);
+        $data = [
+            'stars' => empty($stars) ? 0 : $stars,
+            'followers' => empty($followers) ? 0 : $followers,
+            'forks' => empty($numForks) ? 0 : $numForks,
+            'releases' => empty($numReleases) ? 0 : $numReleases,
+            'last_release_date' => empty($lastReleaseDate) ? null : date('Y-m-d H:i:s' , strtotime($lastReleaseDate)),
+            'open_pull_requests' => empty($numOpenPullRequests) ? null : $numOpenPullRequests,
+            'closed_pull_requests' => empty($numClosedPullRequests) ? null : $numClosedPullRequests,
+            'latest_pull_request' => empty($latestPullRequest) ? null : $latestPullRequest,
+            'latest_merge_pull_request' => empty($latestMergedPullRequest) ? null : $latestMergedPullRequest
+        ];
+
+        $result = response()->json( $data );
 
         Cache::put($cacheKey, $result, $cacheTime);
         return $result;
@@ -98,16 +95,21 @@ class GithubApiController extends Controller
             return Github::all();
         });
 
-        if( empty( $data )){
-            throw new NotFoundException("Data not found");
+        if (empty($data)) {
+            throw new NotFoundException("Data not found", JsonResponse::HTTP_NO_CONTENT);
         }
 
         foreach( $data as $index=>$value ) {
-            $data[$index]['stats'] = $this->getGithubStats( $value['url']);
+            try {
+                $data[$index]['stats'] = $this->getGithubStats( $value['url']);
+            } catch (\Exception $e) {
+                // handle the exception as needed, e.g. log it or re-throw it
+                $data[$index]['stats'] = null; // set stats to null to indicate error
+            }
 
         }
 
-        return response()->json(['data' => $data], 200);
+        return response()->json(['data' => $data], JsonResponse::HTTP_OK);
     }
 
     /**
@@ -118,27 +120,30 @@ class GithubApiController extends Controller
     public function store(GithubStoreRequest $request, $id = null)
     {
         $data = $request->validated();
-        if( empty( $data )){
-            throw new NotFoundException("Data not found");
+        if (empty($data)) {
+            return response()->json(['error' => 'Data not found'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if (Github::count() >= 5) {
-            throw new NotFoundException("Cannot create more than 5 records.");
+            return response()->json(['error' => 'Cannot create more than 5 records.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $github = Github::updateOrCreate(['id' => $id], $data);
 
-        return response()->json(['success' => true, 'id' => $github->id], $id ? 204: 201);
+        $statusCode = $github->wasRecentlyCreated ? JsonResponse::HTTP_CREATED : JsonResponse::HTTP_OK;
+
+        return response()->json(['success' => true, 'id' => $github->id], $statusCode);
     }
+
 
     public function remove($id)
     {
         $github = Github::find($id);
         if (!$github) {
-            throw new NotFoundException("Record not found");
+            return response()->json(['error' => 'Data not found'], JsonResponse::HTTP_NO_CONTENT);
         }
 
         $github->delete();
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true], JsonResponse::HTTP_OK);
     }
 }

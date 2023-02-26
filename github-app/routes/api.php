@@ -20,10 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['prefix' => 'github'], function () {
-    Route::get('/', [GithubApiController::class, 'index']);
-    Route::get('/getList', [GithubApiController::class, 'index']);
-    Route::get('/remove/{id}', [GithubApiController::class, 'remove']);
-    Route::post('/store/{id?}', [GithubApiController::class, 'store']);
+    Route::get('/', [GithubApiController::class, 'index'])->name('api.github');
+    Route::get('/getList', [GithubApiController::class, 'index'])->name('api.github.index');
+    Route::get('/remove/{id}', [GithubApiController::class, 'remove'])->name('api.github.remove');
+    Route::post('/store/{id?}', [GithubApiController::class, 'store'])->name('api.github.store');
 });
 
 

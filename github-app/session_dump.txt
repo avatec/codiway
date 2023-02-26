@@ -1,0 +1,61 @@
+Array
+(
+    [_token] => LvcjSampBQdTxCK1FZqXxMwGfQN6nuSTkOEJ2v50
+    [_old_input] => Array
+        (
+            [0] => Array
+                (
+                    [name] => Enrico Wolf
+                    [url] => https://github.com/WordPress/WordPress
+                )
+
+            [1] => Array
+                (
+                    [name] => Laurianne Doyle
+                    [url] => www.github.com
+                )
+
+        )
+
+    [_flash] => Array
+        (
+            [new] => Array
+                (
+                )
+
+            [old] => Array
+                (
+                    [0] => _old_input
+                    [1] => errors
+                )
+
+        )
+
+    [errors] => Illuminate\Support\ViewErrorBag Object
+        (
+            [bags:protected] => Array
+                (
+                    [default] => Illuminate\Support\MessageBag Object
+                        (
+                            [messages:protected] => Array
+                                (
+                                    [name] => Array
+                                        (
+                                            [0] => Pole name jest wymagane.
+                                        )
+
+                                    [url] => Array
+                                        (
+                                            [0] => Pole url jest wymagane.
+                                        )
+
+                                )
+
+                            [format:protected] => :message
+                        )
+
+                )
+
+        )
+
+)
