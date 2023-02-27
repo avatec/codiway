@@ -15,5 +15,10 @@ return [
     'create' => 'Create',
     'created' => 'Created.',
     'update' => 'Update',
-    'updated' => 'Updated.'
+    'updated' => 'Updated.',
+    'Stars' => 'Stars',
+    'Followers' => 'Followers',
+    'Forks' => 'Forks',
+    'Releases' => 'Releases',
+    'Ocena' => 'Rank'
 ];
