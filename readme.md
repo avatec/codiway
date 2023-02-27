@@ -17,7 +17,7 @@
     DB_PASSWORD=password
     ```
 7. Wykonujemy polecenie `npm install && npm run build`
-8. Wykonujemy polecenie `./sail up` (docker powinien być uruchomiony)
+8. Wykonujemy polecenie `./sail up` następnie w kolejnym terminalu `./sail artisan migrate:install && ./sail artisan migrate`
 9. Wchodzimy na zakładkę: http://127.0.0.1:8080/register podajemy dane do logowania
 10. Gotowe - wszystko śmiga :-)
 
