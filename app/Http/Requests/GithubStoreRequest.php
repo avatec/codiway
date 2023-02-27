@@ -25,7 +25,8 @@ class GithubStoreRequest extends FormRequest
     {
         return [
             'name' => ['string' , 'max:255' , 'required'],
-            'url' => ['string' , 'required', new GithubRepoUrl]
+            'url' => ['string' , 'required', new GithubRepoUrl],
+            'rank' => ['int' , 'required', 'min:1','max:4']
         ];
     }
 }

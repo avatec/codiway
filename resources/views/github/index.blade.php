@@ -28,15 +28,25 @@
                                     <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('github.ID') }}</th>
                                     <th width="200" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-left">{{ __('github.Name') }}</th>
                                     <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-left">{{ __('github.Url') }}</th>
+                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('github.Stars') }}</th>
+                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('github.Followers') }}</th>
+                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('github.Forks') }}</th>
+                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('github.Releases') }}</th>
+                                    <th width="300" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-center">{{ __('github.Ocena') }}</th>
                                     <th width="150" class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-800 text-right">{{ __('github.Operations') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-slate-100">
                             @foreach ($list as $item)
                                 <tr class="dark:border-slate-700text-slate-500 dark:text-slate-700">
-                                    <td class="p-4 pl-8">{{ $item->id }}</td>
+                                    <td class="p-4 pl-8 text-center">{{ $item->id }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->url }}</td>
+                                    <td class="text-center">{{ $item->stats->stars_rank }}</td>
+                                    <td class="text-center">{{ $item->stats->followers_rank }}</td>
+                                    <td class="text-center">{{ $item->stats->forks_rank }}</td>
+                                    <td class="text-center">{{ $item->stats->releases_rank }}</td>
+                                    <td class="text-center">{{ $item->rank_name }}</td>
                                     <td class="text-right">
                                         <a href="{{ route('github.show', ['id' => $item->id]) }}" class="btn btn-blue">
                                             {{ __('github.Edit') }}

@@ -29,7 +29,18 @@ class GithubFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'url' => $url,
-            'stats' => []
+            'rank' => $this->faker->randomElement([1,2,3,4]),
+            'stats' => json_encode([
+                'stars' => 10,
+                'followers' => 20,
+                'forks' => 30,
+                'releases' => 40,
+                'last_release_date' => '2023-02-27',
+                'open_pull_requests' => 5,
+                'closed_pull_requests' => 10,
+                'latest_pull_request' => 'http://github.com/smarty-php/smarty/pulls/123',
+                'latest_merge_pull_request' => 'http://github.com/smarty-php/smarty/pulls/456'
+            ])
         ];
     }
 }

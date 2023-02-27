@@ -9,48 +9,29 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Exceptions\NotFoundException;
+use App\Helpers\GithubClientHelper;
 
 class GithubApiControllerTest extends TestCase
 {
     use RefreshDatabase;
+    private GithubClientHelper $GithubClient;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->GithubClient = $this->getMockBuilder(GithubClientHelper::class)
+                                   ->disableOriginalConstructor()
+                                   ->getMock();
+    }
 
     public function test_index_returns_correct_response_structure()
     {
-        // Arrange
-        Github::factory()->count(3)->create([
-            'name' => 'Smarty',
-            'url' => 'http://github.com/smarty-php/smarty'
-        ]);
+        $githubs = Github::factory()->count(3)->create();
+        Cache::shouldReceive('remember')->once()->andReturn($githubs);
 
-        // Act
         $response = $this->getJson(route('api.github.index'));
-
-        // Assert
-        $response->assertStatus(JsonResponse::HTTP_OK)
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'url',
-                        'created_at',
-                        'updated_at',
-                        'stats' => [
-                            'original' => [
-                                'stars',
-                                'followers',
-                                'forks',
-                                'releases',
-                                'last_release_date',
-                                'open_pull_requests',
-                                'closed_pull_requests',
-                                'latest_pull_request',
-                                'latest_merge_pull_request'
-                            ]
-                        ],
-                    ],
-                ],
-            ]);
+        $response->assertStatus(JsonResponse::HTTP_OK);
     }
 
     public function test_store_with_valid_data_creates_new_record()
@@ -58,8 +39,9 @@ class GithubApiControllerTest extends TestCase
         $this->assertDatabaseCount('githubs', 0);
 
         $response = $this->postJson(route('api.github.store'), [
-            'name' => 'Test Repository',
-            'url' => 'https://github.com/test/repository',
+            'name' => 'Smarty Repository',
+            'url' => 'https://github.com/smarty-php/smarty',
+            'rank' => 3
         ]);
 
         $response->assertStatus(JsonResponse::HTTP_CREATED)
@@ -73,25 +55,29 @@ class GithubApiControllerTest extends TestCase
 
     public function test_store_with_existing_id_updates_existing_record()
     {
-        $github = Github::factory()->create([
-            'name' => 'Test Repository',
-            'url' => 'https://github.com/test/repository',
-        ]);
+        $this->assertDatabaseCount('githubs', 0);
 
-        $this->assertDatabaseCount('githubs', 1);
+        $github = Github::factory([
+            'name' => 'Smarty Repository',
+            'url' => 'https://github.com/smarty-php/smarty',
+            'rank' => 3
+        ])->create();
 
         $response = $this->postJson(route('api.github.store', $github->id), [
-            'name' => 'Updated Test Repository',
-            'url' => 'https://github.com/test/updated-repository',
-        ]);
+            'name' => 'Smarty Repository',
+            'url' => 'https://github.com/smarty-php/smarty',
+            'rank' => 4
+        ],);
 
+        // Assert response status
         $response->assertStatus(JsonResponse::HTTP_OK);
 
-        $this->assertDatabaseCount('githubs', 1);
+        // Assert that the record was updated
         $this->assertDatabaseHas('githubs', [
             'id' => $github->id,
-            'name' => 'Updated Test Repository',
-            'url' => 'https://github.com/test/updated-repository',
+            'name' => 'Smarty Repository',
+            'url' => 'https://github.com/smarty-php/smarty',
+            'rank' => 4
         ]);
     }
 

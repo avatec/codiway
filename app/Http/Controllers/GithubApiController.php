@@ -29,19 +29,21 @@ class GithubApiController extends Controller
     public function index()
     {
         $data = Cache::remember('github.data', 60, function () {
-            return Github::all();
+            return Github::all()->map(function ($item) {
+                $item->stats = json_decode($item->stats);
+                $item->stats->stars_rank = $this->getRank($item->stats->stars);
+                $item->stats->followers_rank = $this->getRank($item->stats->followers);
+                $item->stats->forks_rank = $this->getRank($item->stats->forks);
+                $item->stats->releases_rank = $this->getRank($item->stats->releases);
+
+                $item->rank_name = $this->getCustomRank( $item->rank );
+
+                return $item;
+            });
         });
 
         if (empty($data)) {
             throw new NotFoundException("Data not found", JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        foreach( $data as $index=>$value ) {
-            try {
-                $data[$index]['stats'] = $this->GithubClient->getStats( $value['url'] );
-            } catch (\Exception $e) {
-                $data[$index]['stats'] = null;
-            }
         }
 
         return response()->json(['data' => $data], JsonResponse::HTTP_OK);
@@ -52,7 +54,7 @@ class GithubApiController extends Controller
      * @LRDparam url string URL of repository
      * @LRDparam responses 204,201,404
      */
-    public function store(GithubStoreRequest $request, $id = null)
+    public function store(GithubStoreRequest $request, GithubClientHelper $helper, $id = null)
     {
         $data = $request->validated();
         if (empty($data)) {
@@ -63,6 +65,8 @@ class GithubApiController extends Controller
             return response()->json(['error' => 'Cannot create more than 5 records.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        $stats = $helper->getStats( $data['url'] );
+        $data['stats'] = $stats->getContent();
         $github = Github::updateOrCreate(['id' => $id], $data);
 
         $statusCode = $github->wasRecentlyCreated ? JsonResponse::HTTP_CREATED : JsonResponse::HTTP_OK;

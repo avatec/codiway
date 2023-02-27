@@ -29,6 +29,16 @@
             <x-input-error class="mt-2" :messages="$errors->get('url')" />
         </div>
 
+        <div>
+            <x-input-label for="rank" :value="__('Rank')" />
+            <x-input-radio id="rate0" name="rank" value="1" label="Nieprzydatne" :checked="old('rank', $item->rank ?? 0) == '1'" />
+            <x-input-radio id="rate1" name="rank" value="2" label="Przydatne" :checked="old('rank', $item->rank ?? 0) == '2'" />
+            <x-input-radio id="rate2" name="rank" value="3" label="Bardzo przydatne" :checked="old('rank', $item->rank ?? 0) == '3'" />
+            <x-input-radio id="rate2" name="rank" value="4" label="Niezbędne" :checked="old('rank', $item->rank ?? 0) == '4'" />
+
+            <x-input-error class="mt-2" :messages="$errors->get('rank')" />
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ isset($item) && $item->id ? __('github.update') : __('github.create') }}</x-primary-button>
 

@@ -12,30 +12,12 @@ class GithubControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    // public function testIndex()
-    // {
-    //     $user = User::factory()->create();
-    //     $this->actingAs($user);
-
-    //     Github::factory()->count(3)->create();
-    //     $response = $this->get(route('github'));
-    //     $response->assertOk();
-    //     $githubs = Github::all();
-    //     foreach ($githubs as $github) {
-    //         $response->assertSee($github->name);
-    //     }
-    // }
-
     public function testIndexDisplaysAllGithubs()
     {
-        // Arrange
         $user = User::factory()->create();
         $githubs = Github::factory()->count(3)->create();
 
-        // Act
         $response = $this->actingAs($user)->get(route('github'));
-
-        // Assert
         $response->assertStatus(200);
         $response->assertViewIs('github.index');
         $response->assertViewHas('list', $githubs);
@@ -43,14 +25,10 @@ class GithubControllerTest extends TestCase
 
     public function testShowDisplaysGithubDetails()
     {
-        // Arrange
         $user = User::factory()->create();
         $github = Github::factory()->create();
 
-        // Act
         $response = $this->actingAs($user)->get(route('github.show', $github->id));
-
-        // Assert
         $response->assertStatus(200);
         $response->assertViewIs('github.show');
         $response->assertViewHas('item', $github);
@@ -58,27 +36,24 @@ class GithubControllerTest extends TestCase
 
     public function testAddShowsAddForm()
     {
-        // Arrange
         $user = User::factory()->create();
 
-        // Act
         $response = $this->actingAs($user)->get(route('github.add'));
-
-        // Assert
         $response->assertStatus(200);
         $response->assertViewIs('github.add');
     }
 
     public function testStoreCreatesNewGithub()
     {
-        // Arrange
         $user = User::factory()->create();
 
-        $githubData = Github::factory()->make()->toArray();
-        // Act
-        $response = $this->actingAs($user)->patch(route('github.store'), $githubData);
+        $githubData = Github::factory([
+            'name' => 'Test Repository',
+            'url' => 'https://github.com/test/repository',
+            'rank' => 3
+        ])->make()->toArray();
 
-        // Assert
+        $response = $this->actingAs($user)->patch(route('github.store'), $githubData);
         $response->assertSessionHas('status', 'github-created');
         $response->assertRedirect(route('github'));
 
@@ -87,16 +62,12 @@ class GithubControllerTest extends TestCase
 
     public function testStoreUpdatesExistingGithub()
     {
-        // Arrange
         $user = User::factory()->create();
 
         $github = Github::factory()->create();
         $updatedData = Github::factory()->make()->toArray();
 
-        // Act
         $response = $this->actingAs($user)->patch(route('github.store', $github->id), $updatedData);
-
-        // Assert
         $response->assertSessionHas('status', 'github-updated');
         $response->assertRedirect(route('github'));
 
@@ -105,16 +76,12 @@ class GithubControllerTest extends TestCase
 
     public function testStoreFailsToCreateMoreThan5Githubs()
     {
-        // Arrange
         $user = User::factory()->create();
 
         $existingGithubs = Github::factory()->count(5)->create();
         $newGithubData = Github::factory()->make()->toArray();
 
-        // Act
         $response = $this->actingAs($user)->post(route('github.store'), $newGithubData);
-
-        // Assert
         $response->assertSessionHasErrors('message');
         $response->assertRedirect(route('github'));
         $this->assertDatabaseMissing('githubs', $newGithubData);
@@ -132,6 +99,5 @@ class GithubControllerTest extends TestCase
             ->assertStatus(200);
 
         $this->assertDatabaseMissing('githubs', ['id' => $github->id]);
-
     }
 }
