@@ -28,7 +28,8 @@ class GithubFactory extends Factory
         $url = $this->faker->randomElement(array_merge(self::$correctUrls, self::$incorrectUrls));
         return [
             'name' => $this->faker->name(),
-            'url' => $url
+            'url' => $url,
+            'stats' => []
         ];
     }
 }
