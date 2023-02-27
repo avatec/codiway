@@ -5,7 +5,7 @@
     `git clone https://github.com/avatec/codiway.git`
 
 2. Wchodzimy w katalog codiway `cd codiway`
-3. Wykonujemy polecenie `composer update`
+3. Wykonujemy polecenie `composer install`
 4. Wykonujemy polecenie `cp .env.example .env`
 5. Wykonujemy polecenie `php artisan key:generate`
 6. Edytujemy .env i wprowadzamy następujące dane:
