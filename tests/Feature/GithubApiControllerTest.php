@@ -67,12 +67,9 @@ class GithubApiControllerTest extends TestCase
             'name' => 'Smarty Repository',
             'url' => 'https://github.com/smarty-php/smarty',
             'rank' => 4
-        ],);
-
-        // Assert response status
+        ]);
         $response->assertStatus(JsonResponse::HTTP_OK);
 
-        // Assert that the record was updated
         $this->assertDatabaseHas('githubs', [
             'id' => $github->id,
             'name' => 'Smarty Repository',
@@ -111,7 +108,7 @@ class GithubApiControllerTest extends TestCase
 
     public function test_remove_with_non_existing_id_throws_exception()
     {
-        $nonExistingId = 12345; // assuming this id does not exist in the database
+        $nonExistingId = 12345;
 
         $response = $this->get(route('api.github.remove', $nonExistingId));
         $response->assertStatus(JsonResponse::HTTP_NO_CONTENT);
