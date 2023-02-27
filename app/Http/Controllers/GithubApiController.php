@@ -24,7 +24,7 @@ class GithubApiController extends Controller
      * @lrd:start
      * Returns github repositories list
      * @lrd:end
-     * @return json array
+     * @return JsonResponse
      */
     public function index()
     {
@@ -75,6 +75,14 @@ class GithubApiController extends Controller
     }
 
 
+    /**
+     * @lrd:start
+     * Usunięcie repozytorium. Użyj metody GET
+     * @lrd:end
+     *
+     * @LRDparam id int Id of the repository
+     * @return JsonResponse
+     */
     public function remove($id)
     {
         $github = Github::find($id);

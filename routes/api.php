@@ -19,6 +19,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// API
+// -----------------------------
 Route::group(['prefix' => 'github'], function () {
     Route::get('/', [GithubApiController::class, 'index'])->name('api.github');
     Route::get('/getList', [GithubApiController::class, 'index'])->name('api.github.index');
